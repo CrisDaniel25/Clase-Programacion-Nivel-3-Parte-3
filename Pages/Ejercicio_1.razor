@@ -1,0 +1,215 @@
+@page "/Ejercicio-1"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #1</h1>
+<div class="container">
+    <div class="row">
+        <p>Programa que acepte una cedula, y muestre los datos de la persona: nombre, apellido, fecha de nacimiento, foto y signo del zodiaco. Usar el siguiente api: https://api.adamix.net/apec/cedula/00117600825</p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input class="form-control" placeholder="Introduzca su cédula" type="text" @bind="identificationCard" maxlength="11" />
+        </div>
+        <div class="col">
+            <button class="btn btn-dark" @onclick="find_out">Averiguar persona</button>
+        </div>
+    </div><br />
+    @if (IsSuccess) 
+    {
+        <div class="col justify-content-center">
+            <img class="rounded mx-auto d-block" src="@person.foto" />
+        </div><hr /><br />
+        <div class="col justify-content-center">
+            <ul class="list-group">
+                <li class="list-group-item text-center">
+                    <p><strong>Nombres:</strong> @person.Nombres</p>
+                </li>
+                <li class="list-group-item text-center">
+                    <p><strong>Apellidos:</strong> @person.Apellido1 @person.Apellido2</p>
+                </li>
+                <li class="list-group-item text-center">
+                    <p><strong>Fecha de Nacimiento:</strong> @DateBirthDate.ToString("dd/MMMM/yyyy")</p>
+                </li>
+                <li class="list-group-item text-center">
+                    <p><strong>Signo Zodiacal:</strong> @ZodiacSign</p>
+                </li>
+            </ul>
+        </div>
+    }
+    else if (!IsSuccess)
+    {
+        <div class="col justify-content-center">
+            <ul class="list-group">
+                <li class="list-group-item text-center">
+                    <p><strong>Mensaje:</strong> @Menssage</p>
+                </li>
+            </ul>
+        </div>
+    }
+</div>
+
+@code {
+    private string URL_API = "https://api.adamix.net/apec/cedula/";
+    public Persona person {get; set;}
+    public string identificationCard {get; set;}
+    public bool IsSuccess = false;
+    public string Menssage = "Ninguna persona encontrada";
+    public DateTime DateBirthDate {get; set;}
+    public string ZodiacSign {get; set;}
+    
+    public async Task find_out()
+    {
+        HttpClient http = new HttpClient();
+        var response = await http.GetAsync(URL_API + identificationCard);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var resultToString = await response.Content.ReadAsStringAsync();
+            person = JsonConvert.DeserializeObject<Persona>(resultToString);
+            DateBirthDate = person.ok ? DateTime.Parse(person.FechaNacimiento) : new DateTime(2000, 5, 5);
+            ZodiacSign = person.ok ? GetZodiac(DateBirthDate) : "";
+            IsSuccess = person.ok ? true : false;
+            Menssage = person.ok ? "" : "Cedula no es valida o no encontrada";
+        }        
+    }
+
+    private string GetZodiac(DateTime BirthDate)
+    {
+        try
+        {
+            string BirthMonthPerson = BirthDate.ToString("MMMM");
+            int BirthDayPerson = Convert.ToInt32(BirthDate.ToString("dd")); 
+
+            switch(BirthMonthPerson)
+            {
+                case "January":
+                    if (BirthDayPerson <= 19)
+                    {
+                        return "Capricornio";
+                    }
+                    else if (BirthDayPerson >= 20)
+                    {
+                        return "Acuario";
+                    }
+                break;
+                case "February":
+                    if (BirthDayPerson <= 18)
+                    {
+                        return "Acuario";
+                    }
+                    else if (BirthDayPerson >= 19)
+                {
+                    return "Piscis";
+                }
+                break;
+                case "March":
+                    if (BirthDayPerson <= 20)
+                    {
+                        return "Piscis";
+                    }
+                    else if (BirthDayPerson >= 21)
+                    {
+                        return "Aries";
+                    }
+                break;
+                case "April":
+                    if (BirthDayPerson <= 19)
+                    {
+                        return "Aries";
+                    }
+                    else if (BirthDayPerson >= 20)
+                    {
+                        return "Tauro";
+                    }
+                break;
+                case "May":
+                    if (BirthDayPerson <= 20)
+                    {
+                        return "Tauro";
+                    }
+                    else if (BirthDayPerson >= 21)
+                    {
+                        return "Géminis";
+                    }
+                break;
+                case "June":
+                    if (BirthDayPerson <= 20)
+                    {
+                        return "Géminis";
+                    }
+                    else if (BirthDayPerson >= 21)
+                    {
+                        return "Cáncer";
+                    }
+                break;
+                case "July":
+                    if (BirthDayPerson <= 22)
+                    {
+                        return "Cáncer";
+                    }
+                    else if (BirthDayPerson >= 23)
+                    {
+                        return "Leo";
+                    }
+                break;
+                case "August":
+                    if (BirthDayPerson <= 22)
+                    {
+                        return "Leo";
+                    }
+                    else if (BirthDayPerson >= 23)
+                    {
+                        return "Virgo";
+                    }
+                break;
+                case "September":
+                    if (BirthDayPerson <= 22)
+                    {
+                        return "Virgo";
+                    }
+                    else if (BirthDayPerson >= 23)
+                    {
+                        return "Libra";
+                    }
+                break;
+                case "October":
+                    if (BirthDayPerson <= 22)
+                    {
+                        return "Libra";
+                    }
+                    else if (BirthDayPerson >= 23)
+                    {
+                        return "Escorpio";
+                    }
+                break;
+                case "November": 
+                    if (BirthDayPerson <= 21)
+                    {
+                        return "Escorpio";
+                    }
+                    else if (BirthDayPerson >= 22)
+                    {
+                        return "Sagitario";
+                    }
+                break;
+                case "December":
+                    if (BirthDayPerson <= 21)
+                    {
+                        return "Sagitario";
+                    }
+                    else if (BirthDayPerson >= 22)
+                    {
+                        return "Capricornio";
+                    }
+                break;
+            }  
+        }
+        catch (System.Exception)
+        {
+            return "";
+        }
+
+        return "";
+    }
+}
