@@ -1,1 +1,29 @@
 @page "/Ejercicio-4"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #4</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <p>Programa que acepte el codigo de un video de youtube, mostrar en la pagina el video con opcion a reproducir. Ejemplo ICfaQ8mSppM. </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input class="form-control" placeholder="Escriba aqui" type="text" />
+        </div>
+        <div class="col">
+            <button class="btn btn-dark">Buscar</button>
+        </div>
+    </div><br />
+    <div class="col justify-content-center">
+        <ul class="list-group">
+            <li class="list-group-item text-center">
+                <p></p>
+            </li>
+        </ul> 
+    </div>
+</div>
+
+@code {
+    private string URL_API = "";
+}

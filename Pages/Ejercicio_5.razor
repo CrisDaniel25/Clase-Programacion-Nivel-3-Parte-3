@@ -1,1 +1,35 @@
 @page "/Ejercicio-5"
+@using Tarea_3.Data
+@using System.Text
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #5</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <p>Programa que acepte un texto (Textarea), al presionar el boton enviar el mismo debe ser enviado a un grupo de telegram que usted creara para estos fines., debajo de la captura de texto, coloque el link para entrar al grupo de telegram y el profesor poder probar esto. </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <textarea @bind="Text" rows="4" cols="50">
+                Hola, como esta?
+            </textarea>
+        </div>
+        <div class="col">
+            <button class="btn btn-dark" @onclick="Send">Enviar</button>
+        </div>
+    </div><br />
+</div>
+
+@code {
+    private string URL_API = "https://api.telegram.org/bot1640446702:AAFIRU0uCKYN1QBVklbQVMYcC2raw6YNr2k/sendMessage?chat_id=-1001203800944&text=Hola";
+    public string Text {get; set;}
+
+    public async Task Send()
+    {
+        @* URL_API = URL_API + Text; *@
+        HttpClient http = new HttpClient();
+        HttpContent c = new StringContent(Text);
+        var response = await http.PostAsync(URL_API, c);
+        Console.WriteLine(response);
+    }
+}

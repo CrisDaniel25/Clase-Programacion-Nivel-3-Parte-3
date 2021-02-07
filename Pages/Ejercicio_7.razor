@@ -1,1 +1,75 @@
 @page "/Ejercicio-7"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #7</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <p>Programa que acepte el nombre de un pokemon(en ingles), mostrar informacion del pokemon y una foto. </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input class="form-control" placeholder="Escriba aqui" type="text" @bind="pokemonName" />
+        </div>
+        <div class="col">
+            <button class="btn btn-dark" @onclick="getPokemon">Buscar</button>
+        </div>
+    </div><br />
+    @if(IsSuccess)
+    {
+        <div class="col justify-content-center">
+            <img class="rounded mx-auto d-block" src="@pokemon.sprites.front_default" />
+        </div><hr /><br />
+        <div class="col justify-content-center">
+            <ul class="list-group">
+                <li class="list-group-item text-center">
+                    <p><strong>Nombre:</strong> @pokemon.name</p>
+                </li>
+                <li class="list-group-item text-center">
+                    <p><strong>Peso:</strong> @weight <strong>kg</strong></p>
+                </li>
+                <li class="list-group-item text-center">
+                    <p><strong>Estatura:</strong> @pokemon.height <strong>dm</strong></p>
+                </li>
+            </ul> 
+        </div>
+    }
+    else
+    {
+        <div class="col justify-content-center">
+            <ul class="list-group">
+                <li class="list-group-item text-center">
+                    <p>@Menssage</p>
+                </li>
+            </ul> 
+        </div>
+    }
+</div>
+
+@code {
+    private string URL_API = "https://pokeapi.co/api/v2/pokemon/";
+    public Pokemon pokemon {get; set;}
+    public string pokemonName {get; set;}
+    public bool IsSuccess = false;
+    public string Menssage {get; set;}
+    public double weight {get; set;}
+
+    public async Task getPokemon()
+    {
+        HttpClient http = new HttpClient();
+        var response = await http.GetAsync(URL_API + pokemonName.ToLower());
+
+        if (response.IsSuccessStatusCode)
+        {
+            var resultToString = await response.Content.ReadAsStringAsync();
+            pokemon = JsonConvert.DeserializeObject<Pokemon>(resultToString);
+            weight = Convert.ToDouble(pokemon.weight / 10);
+            IsSuccess = true;
+        }
+        else
+        {
+            Menssage = "Pokémon no encontrado";
+            IsSuccess = false;
+        }
+    }
+}

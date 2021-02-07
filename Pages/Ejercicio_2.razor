@@ -1,1 +1,98 @@
 @page "/Ejercicio-2"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #2</h1>
+<div class="container">
+    <div class="row">
+        <p>Programa que muestre la prediccion del clima actualizada para santo domingo (o su provincia), sin importar cuando se ejecute su aplicacion debe de mostrar estos datos. </p>
+    </div>
+    <div class="col justify-content-center">
+            <button class="btn btn-dark" @onclick="Reload">Recargar</button>
+        </div><hr /><br />
+    <div class="col justify-content-center">
+        <ul class="list-group">
+            <li class="list-group-item text-center">
+                <h3 class="text-center"><strong>Santo Domingo,DO</strong></h3>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Fecha de la ISO</h3>
+                <p><strong>@Date.ToString("dd/MM/yyyy")</strong></p>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Temperatura</h3>
+                <p><strong>Máxima: </strong>@TempmaxC°C  <strong>Mínima: </strong>@TempminC°C</p>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Sensación de la temperatura</h3>
+                <p><strong>Máxima: </strong>@TempfeelLikemaxC°C  <strong>Mínima: </strong>@TempfeelLikeminC°C</p>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Humedad</h3>
+                <p><strong>Máxima: </strong>@Humiditymax   <strong>Promedio: </strong>@Humidityavg   <strong>Mínima: </strong>@Humiditymin</p>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Velocidad de viento</h3>
+                 <p><strong>Máxima: </strong>@windSpeedmaxKPH KPH  <strong>Promedio: </strong>@windSpeedavgKPH KPH   <strong>Mínima: </strong>@windSpeedminKPH KPH</p>
+            </li>
+            <li class="list-group-item text-center">
+                <h3 class="text-center">Clima</h3>
+                <p><strong>@weatherPhrase</strong></p>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@code {
+    private string URL_API = "https://api.aerisapi.com/conditions/summary/santo domingo,do?&format=json&from=now&to=now&fields=loc,periods.dateTimeISO,periods.temp,periods.feelslike,periods.humidity,periods.windSpeed,periods.weather&client_id=hmzavWkezJCkt1FOsVsTu&client_secret=DwtS8xlQFhCkBUtVQwi9vMJd69mPIZaZyabQMjH1";
+    public Clima weather {get; set;}
+    public DateTime Date {get; set;}
+    public double latitude {get; set;}
+    public double length {get; set;}
+    public double TempmaxC {get; set;}
+    public double TempminC {get; set;}
+    public double TempfeelLikemaxC {get; set;}
+    public double TempfeelLikeminC {get; set;}
+    public double Humiditymax {get; set;}
+    public double Humidityavg {get; set;}
+    public double Humiditymin {get; set;}
+    public double windSpeedmaxKPH {get; set;}
+    public double windSpeedavgKPH {get; set;}
+    public double windSpeedminKPH {get; set;}
+    public string weatherPhrase {get; set;}
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    public async Task Reload()
+    {
+        HttpClient http = new HttpClient();
+        var response = await http.GetAsync(URL_API);    
+
+        if (response.IsSuccessStatusCode)
+        {
+            var resultToString = await response.Content.ReadAsStringAsync();
+            weather = JsonConvert.DeserializeObject<Clima>(resultToString);
+            foreach (var result in weather.response) 
+            {   
+                foreach (var res in result.periods)
+                {
+                    Date = res.dateTimeISO;
+                    TempmaxC = res.temp.maxC;
+                    TempminC = res.temp.minC;
+                    TempfeelLikemaxC = res.feelslike.maxC;
+                    TempfeelLikeminC = res.feelslike.minC;
+                    Humiditymax = res.humidity.max;
+                    Humidityavg = res.humidity.avg;
+                    Humiditymin = res.humidity.min;
+                    windSpeedmaxKPH = res.windSpeed.maxKPH;
+                    windSpeedavgKPH = res.windSpeed.avgKPH;
+                    windSpeedminKPH = res.windSpeed.minKPH;
+                    weatherPhrase = res.weather.phrase;
+                }
+            }
+        }
+    }
+}

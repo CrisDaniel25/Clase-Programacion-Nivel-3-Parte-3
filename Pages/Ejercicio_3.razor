@@ -1,1 +1,36 @@
 @page "/Ejercicio-3"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #3</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <p>Programa que acepte una palabra o frase en español, mostrarla en ingles. </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input class="form-control" placeholder="Escriba aqui" type="text" @bind="sentence" />
+        </div>
+        <div class="col">
+            <button class="btn btn-dark" @onclick="translate">Traducir</button>
+        </div>
+    </div><br />
+    <div class="col justify-content-center">
+        <ul class="list-group">
+            <li class="list-group-item text-center">
+                <p>@translation</p>
+            </li>
+        </ul> 
+    </div>
+</div>
+
+@code {
+    private string URL_API = "";
+    public string sentence {get; set;}
+    public string translation {get; set;}
+
+    public void translate()
+    {
+
+    }
+}

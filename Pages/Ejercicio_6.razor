@@ -1,1 +1,29 @@
 @page "/Ejercicio-6"
+@using Tarea_3.Data
+@using Newtonsoft.Json
+
+<h1 class="text-center">Ejercicio #6</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <p>Programa que muestre los ultimos 5 videos que usted ha subido a su canal de youtube. (Este programa debe actualizarse de manera automatica, usando el api de youtube). </p>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input class="form-control" placeholder="Escriba aqui" type="text" />
+        </div>
+        <div class="col">
+            <button class="btn btn-dark">Buscar</button>
+        </div>
+    </div><br />
+    <div class="col justify-content-center">
+        <ul class="list-group">
+            <li class="list-group-item text-center">
+                <p></p>
+            </li>
+        </ul> 
+    </div>
+</div>
+
+@code {
+    private string URL_API = "https://www.googleapis.com/youtube/v3/search?key={your_key_here}&channelId={channel_id_here}&part=snippet,id&order=date&maxResults=20";
+}
