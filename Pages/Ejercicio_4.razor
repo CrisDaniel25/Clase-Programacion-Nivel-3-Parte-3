@@ -9,21 +9,27 @@
     </div>
     <div class="row">
         <div class="col">
-            <input class="form-control" placeholder="Escriba aqui" type="text" />
+            <input class="form-control" placeholder="Escriba aqui" type="text" @bind="code" />
         </div>
         <div class="col">
-            <button class="btn btn-dark">Buscar</button>
+            <button class="btn btn-dark" @onclick="Search">Buscar</button>
         </div>
     </div><br />
     <div class="col justify-content-center">
         <ul class="list-group">
             <li class="list-group-item text-center">
-                <p></p>
+                <iframe width="auto" height="auto"
+                    src="@video">
+                </iframe>
             </li>
         </ul> 
     </div>
 </div>
 
 @code {
-    private string URL_API = "";
+    private string URL_API = "https://www.youtube.com/embed/";
+    public string video =  "";
+    public string code {get; set;}
+
+    public void Search() { video = string.IsNullOrEmpty(code) ? "" : URL_API + code; }
 }

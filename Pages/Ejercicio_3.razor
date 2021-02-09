@@ -15,22 +15,39 @@
             <button class="btn btn-dark" @onclick="translate">Traducir</button>
         </div>
     </div><br />
+    @if (IsSuccess) 
+    {
     <div class="col justify-content-center">
         <ul class="list-group">
             <li class="list-group-item text-center">
-                <p>@translation</p>
+                <p>@translation.responseData.translatedText</p>
             </li>
         </ul> 
     </div>
+    }
 </div>
 
 @code {
     private string URL_API = "";
     public string sentence {get; set;}
-    public string translation {get; set;}
+    public bool IsSuccess = false;
+    public Translate translation {get; set;}
 
-    public void translate()
+    public async Task translate()
     {
+        URL_API = "https://api.mymemory.translated.net/get?q=" + sentence + "&langpair=es|en";
+        HttpClient http = new HttpClient();
+        var response = await http.GetAsync(URL_API);
 
+        if(response.IsSuccessStatusCode)
+        {
+            var resultToString = await response.Content.ReadAsStringAsync();
+            translation = JsonConvert.DeserializeObject<Translate>(resultToString);
+            IsSuccess = true;
+        }
+        else
+        {
+            IsSuccess =  false;
+        }
     }
 }

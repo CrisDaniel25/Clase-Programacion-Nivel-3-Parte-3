@@ -2,34 +2,51 @@
 @using Tarea_3.Data
 @using System.Text
 @using Newtonsoft.Json
+@using System.Net.Http
 
 <h1 class="text-center">Ejercicio #5</h1>
 <div class="container">
     <div class="row justify-content-center">
         <p>Programa que acepte un texto (Textarea), al presionar el boton enviar el mismo debe ser enviado a un grupo de telegram que usted creara para estos fines., debajo de la captura de texto, coloque el link para entrar al grupo de telegram y el profesor poder probar esto. </p>
-    </div>
+        <a href="https://t.me/joinchat/IbRfn4MWBQN2Pqna">Para unirse al grupo de Telegram. Click aqui...</a>
+    </div><br />
     <div class="row">
         <div class="col">
-            <textarea @bind="Text" rows="4" cols="50">
-                Hola, como esta?
+            <textarea @bind="Text" rows="2" cols="50">
             </textarea>
         </div>
         <div class="col">
             <button class="btn btn-dark" @onclick="Send">Enviar</button>
         </div>
     </div><br />
+    <div class="col justify-content-center">
+        <ul class="list-group">
+            <li class="list-group-item text-center">
+                <p>@Menssage</p>
+            </li>
+        </ul> 
+    </div>
 </div>
 
 @code {
-    private string URL_API = "https://api.telegram.org/bot1640446702:AAFIRU0uCKYN1QBVklbQVMYcC2raw6YNr2k/sendMessage?chat_id=-1001203800944&text=Hola";
+    private string URL_API = "";
     public string Text {get; set;}
+    public string Menssage = "";
 
     public async Task Send()
     {
-        @* URL_API = URL_API + Text; *@
-        HttpClient http = new HttpClient();
-        HttpContent c = new StringContent(Text);
-        var response = await http.PostAsync(URL_API, c);
-        Console.WriteLine(response);
+        if(!(string.IsNullOrEmpty(Text)))
+        {
+            URL_API = "https://api.telegram.org/bot1640446702:AAFIRU0uCKYN1QBVklbQVMYcC2raw6YNr2k/sendMessage?chat_id=-1001203800944&text=" + Text;
+            HttpClient http = new HttpClient();
+            var data = new System.Net.Http.StringContent(Text, Encoding.UTF8, "application/json");
+            var response = await http.PostAsync(URL_API, data);
+            Text = "";
+            Menssage = "Se ha enviado el mensaje exitosamente";
+        }
+        else
+        {
+            Menssage = "Por favor de llevar la casilla para poder enviar el mensaje deseado";
+        }
     }
 }
